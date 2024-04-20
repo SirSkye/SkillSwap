@@ -9,7 +9,8 @@ def set_up_all():
     _set_up_tags(connection)
     _set_up_questiontags(connection)
     _set_up_tutortags(connection)
-    _set_up_matches(connection)
+    _set_up_questonTutorMatches(connection)
+    _set_up_studentTutorMatches(connection)
 
 def _set_up_users(connection: sqlite3.Connection):
     with connection:
@@ -71,15 +72,30 @@ def _set_up_tutortags(connection: sqlite3.Connection):
                             )
                             """)
         
-def _set_up_matches(connection: sqlite3.Connection):
+def _set_up_questonTutorMatches(connection: sqlite3.Connection):
     with connection:
         connection.execute("""
-                            CREATE TABLE Matches (
+                            CREATE TABLE QustionTutorMatches (
                                 match_id INTEGER PRIMARY KEY,
                                 tutor_id INTEGER,
                                 question_id INTEGER,
                                 FOREIGN KEY (tutor_id) REFERENCES Users(user_id),
                                 FOREIGN KEY (question_id) REFERENCES Questions(question_id),
                                 UNIQUE (tutor_id, question_id)
+                                UNIQUE (tutor_id, student_id)
+                            )
+                            """)
+
+def _set_up_studentTutorMatches(connection: sqlite3.Connection):
+    with connection:
+        connection.execute("""
+                            CREATE TABLE TutorStudentMatches (
+                                match_id INTEGER PRIMARY KEY,
+                                tutor_id INTEGER,
+                                student_id INTEGER,
+                                match_date DATE,
+                                FOREIGN KEY (tutor_id) REFERENCES Users(user_id),
+                                FOREIGN KEY (student_id) REFERENCES Users(user_id),
+                                UNIQUE (tutor_id, student_id)
                             )
                             """)
